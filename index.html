@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>穿梭框示例</title>
+
+    <link rel="stylesheet" href="./assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/transfer.css">
+</head>
+
+<body>
+    <div style="text-align: center; margin-top: 100px;">
+        <button id="openTransfer">打开穿梭框</button>
+    </div>
+    <div id="checkData" style="text-align: center;">
+    </div>
+
+    <script src="./assets/jquery/jquery-3.2.1.min.js"></script>
+    <script src="./assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./assets/bootbox.min.js"></script>
+    <script src="./js/transfer.js"></script>
+    <script>
+        $(function () {
+            $("#openTransfer").click(function (e) {
+                $.getJSON("./data.json", function (data) {
+                    var start = new Date().getTime();
+                    var transfer = Transfer.init({
+                        size: "large",
+                        mutil: true,
+                        data: data,
+                        selectedData: [{
+                            id: 1,
+                            name: "场所1",
+                        }, {
+                            id: 102,
+                            name: "场所102",
+                            parentId: 2,
+                            parentName: "场所2"
+                        }],
+                        columns: [{
+                            label: '所属上级',
+                            name: 'parentId',
+                            formatter: function (value, data) {
+                                if (value) {
+                                    return "[" + value + "]" + data.parentName;
+                                }
+                                return "";
+                            }
+                        }, {
+                            label: "场所名称",
+                            name: "name",
+                        }],
+                        success: function () {
+                            var checkedList = transfer.getCheckedList();
+                            $("#checkData").empty();
+                            checkedList.forEach(function (data) {
+                                $("#checkData").append("<p>" + JSON.stringify(data) + "</p>")
+                            });
+                        }
+                    });
+                    var end = new Date().getTime();
+                    console.log(end - start + "ms");
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
